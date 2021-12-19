@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Schattenbrot/bookings/pkg/config"
@@ -32,7 +33,40 @@ func NewHandlers(r *Repository) {
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	remoteIP := r.RemoteAddr
 	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
-	render.RenderTemplate(w, "home.page.html", &models.TemplateData{})
+	render.RenderTemplate(w, r, "home.page.html", &models.TemplateData{})
+}
+
+// Reservation is the handler for the reservatin page
+func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{})
+}
+
+// Generals is the handler for the generals quarters page
+func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "generals.page.html", &models.TemplateData{})
+}
+
+// Majors is the handler for the majors suite page
+func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "majors.page.html", &models.TemplateData{})
+}
+
+// Availability is the handler for the search availability page
+func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "search-availability.page.html", &models.TemplateData{})
+}
+
+// Availability is the handler for the search availability page
+func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	start := r.Form.Get("start")
+	end := r.Form.Get("end")
+
+	w.Write([]byte(fmt.Sprintf("start date is %s, and end date is %s", start, end)))
+}
+
+// Contact is the handler for the contact page
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "contact.page.html", &models.TemplateData{})
 }
 
 // About is the handler for about page
@@ -44,7 +78,7 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	stringMap["remote_ip"] = remoteIP
 
-	render.RenderTemplate(w, "about.page.html", &models.TemplateData{
+	render.RenderTemplate(w, r, "about.page.html", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }

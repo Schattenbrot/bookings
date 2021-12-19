@@ -10,6 +10,7 @@ import (
 
 	"github.com/Schattenbrot/bookings/pkg/config"
 	"github.com/Schattenbrot/bookings/pkg/models"
+	"github.com/justinas/nosurf"
 )
 
 var functions = template.FuncMap{}
@@ -21,12 +22,13 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func AddDefaultData(data *models.TemplateData) *models.TemplateData {
+func AddDefaultData(data *models.TemplateData, r *http.Request) *models.TemplateData {
+	data.CSRFToken = nosurf.Token(r)
 	return data
 }
 
 // RenderTemplate renders templates using html/template
-func RenderTemplate(w http.ResponseWriter, tmpl string, data *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data *models.TemplateData) {
 	var templateCache map[string]*template.Template
 	if app.UseCache {
 		templateCache = app.TemplateCache
@@ -41,7 +43,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, data *models.TemplateDat
 
 	buf := new(bytes.Buffer)
 
-	data = AddDefaultData(data)
+	data = AddDefaultData(data, r)
 
 	_ = template.Execute(buf, data)
 
