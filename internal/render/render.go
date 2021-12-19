@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Schattenbrot/bookings/pkg/config"
-	"github.com/Schattenbrot/bookings/pkg/models"
+	"github.com/Schattenbrot/bookings/internal/config"
+	"github.com/Schattenbrot/bookings/internal/models"
 	"github.com/justinas/nosurf"
 )
 

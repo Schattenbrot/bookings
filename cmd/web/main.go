@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Schattenbrot/bookings/pkg/config"
-	"github.com/Schattenbrot/bookings/pkg/handlers"
-	"github.com/Schattenbrot/bookings/pkg/render"
+	"github.com/Schattenbrot/bookings/internal/config"
+	"github.com/Schattenbrot/bookings/internal/handlers"
+	"github.com/Schattenbrot/bookings/internal/render"
 	"github.com/alexedwards/scs/v2"
 )
 

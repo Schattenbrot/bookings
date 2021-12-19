@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/Schattenbrot/bookings/pkg/config"
-	"github.com/Schattenbrot/bookings/pkg/models"
-	"github.com/Schattenbrot/bookings/pkg/render"
+	"github.com/Schattenbrot/bookings/internal/config"
+	"github.com/Schattenbrot/bookings/internal/models"
+	"github.com/Schattenbrot/bookings/internal/render"
 )
 
 // Repo is the repository used by the handlers
@@ -56,12 +58,34 @@ func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "search-availability.page.html", &models.TemplateData{})
 }
 
-// Availability is the handler for the search availability page
+// PostAvailability is the handler for the search availability page
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	start := r.Form.Get("start")
 	end := r.Form.Get("end")
 
 	w.Write([]byte(fmt.Sprintf("start date is %s, and end date is %s", start, end)))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON is the handler for the search availability page
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      true,
+		Message: "Available!",
+	}
+
+	out, err := json.Marshal(resp)
+	if err != nil {
+		log.Println(err)
+	}
+
+	w.WriteHeader(200)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
 
 // Contact is the handler for the contact page
