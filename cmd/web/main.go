@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/Schattenbrot/bookings/internal/config"
 	"github.com/Schattenbrot/bookings/internal/handlers"
+	"github.com/Schattenbrot/bookings/internal/helpers"
 	"github.com/Schattenbrot/bookings/internal/models"
 	"github.com/Schattenbrot/bookings/internal/render"
 	"github.com/alexedwards/scs/v2"
@@ -17,7 +19,6 @@ import (
 const portNumber = ":8080"
 
 var app config.AppConfig
-
 var session *scs.SessionManager
 
 func main() {
@@ -46,6 +47,9 @@ func run() error {
 	// change this to true when in production
 	app.InProduction = false
 
+	app.InfoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
@@ -65,8 +69,8 @@ func run() error {
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
-
 	render.NewTemplates(&app)
+	helpers.NewHelpers(&app)
 
 	return nil
 }
