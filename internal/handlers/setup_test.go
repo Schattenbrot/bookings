@@ -8,9 +8,11 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/Schattenbrot/bookings/internal/config"
+	"github.com/Schattenbrot/bookings/internal/helpers"
 	"github.com/Schattenbrot/bookings/internal/models"
 	"github.com/Schattenbrot/bookings/internal/render"
 	"github.com/alexedwards/scs/v2"
@@ -24,7 +26,7 @@ var session *scs.SessionManager
 var pathToTemplates = "../../templates"
 var functions = template.FuncMap{}
 
-func getRoutes() http.Handler {
+func TestMain(m *testing.M) {
 	gob.Register(models.Reservation{})
 
 	// change this to true when in production
@@ -49,11 +51,16 @@ func getRoutes() http.Handler {
 	app.TemplateCache = tc
 	app.UseCache = true
 
-	repo := NewRepo(&app)
+	repo := NewTestRepo(&app)
 	NewHandlers(repo)
 
 	render.NewRenderer(&app)
+	helpers.NewHelpers(&app)
 
+	os.Exit(m.Run())
+}
+
+func getRoutes() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
